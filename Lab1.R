@@ -61,3 +61,10 @@ str(surveys)
 
 test <- select(surveys,plot_id,species_id,weight)
 test2 <- filter(surveys,year == 1995)
+test3 <- select(surveys, -record_id, -species_id)
+
+
+surveys %>%
+  group_by(sex, species_id) %>%
+  summarize(mean_weight = mean(weight, na.rm = TRUE)) %>%
+  tail()
