@@ -1,0 +1,61 @@
+---
+title: "rmarkdown_1"
+author: "Yinan Fneg"
+date: "2023-09-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Load needed packages
+
+```{r}
+library(tidyverse)
+library(sf)
+library(ggspatial)
+library(ggplot2)
+```
+## Load the data 
+
+Load the ‘knox_acs.shp’ shapefile into R and give it the name ‘knox’.
+
+
+```{r echo=FALSE}
+knox <- st_read('./doc/lab02_canvas/lab02_canvas/knox_acs.shp')
+```
+## Add column
+
+Add a new column to knox that calculates the fraction of each census tract that is between ages 18 and 21. Call that column “college_frac”.
+
+```{r echo=FALSE}
+knox <- knox %>%
+  mutate(college_frac = AGE18_21 / TOTAL_POP)
+```
+
+## Choropleth plot
+
+Create a choropleth map of the proportion of the population age 18-21. Make sure that the map is appropriately labeled.
+
+```{r echo=FALSE}
+ggplot(knox) + 
+  annotation_map_tile() +
+  geom_sf(aes(fill=college_frac)) + 
+  scale_fill_gradient(name = "Proportion 18-21") +
+  labs(title = "Proportion of Population Aged 18-21 by Census Tract") +
+  coord_sf(datum=NA)
+```
+
+## Histogram plot
+
+Plot a histogram of the Median Household Income and label the axes appropriately. In words, describe the shape of this distribution.
+
+```{r echo=FALSE}
+ggplot(knox, aes(x = MEDHHINC/1000)) +
+  geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
+  labs(title = "Distribution of Median Household Income \n($1000s)",
+       x = "Median Household Income",
+       y = "Number of Census Tracts \n($1000s)") +
+  theme_minimal()
+```
