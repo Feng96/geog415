@@ -56,6 +56,45 @@ ggplot(knox, aes(x = MEDHHINC/1000)) +
   geom_histogram(binwidth = 5, fill = "skyblue", color = "black") +
   labs(title = "Distribution of Median Household Income \n($1000s)",
        x = "Median Household Income",
-       y = "Number of Census Tracts \n($1000s)") +
-  theme_minimal()
+       y = "Number of Census Tracts \n($1000s)")
 ```
+
+## Histogram plot
+
+Create a scatterplot with Household Income (in $1000s) on the x-axis and House Value (in $1000s) on the y-axis.  Set the alpha level to the population of each tract. Describe in words the shape of this scatterplot.
+
+```{r echo=FALSE}
+
+ggplot(knox, aes(x = MEDHHINC / 1000, y = MEDHVALUE / 1000, alpha = TOTAL_POP)) +
+  geom_point(aes(size = TOTAL_POP), color = "black") +
+  labs(title = "Scatterplot of Household Income vs. House Value",
+       x = "Household Income (in $1000s)",
+       y = "House Value (in $1000s)",
+       alpha = "Population") +
+  theme_minimal() +
+  guides(size = FALSE)  # To not show legend for size
+
+```
+
+## Correlation
+
+Calculate the three correlation coefficients between Household Income, House Value, and percent 18-21. Use these correlation coefficients in a sentence without typing the numbers in directly. (i.e. your markdown file should generate the coefficient automatically for you).
+
+```{r echo=FALSE}
+
+summary_stat <- knox %>%
+  summarize(
+    mean_HHINC = mean(MEDHHINC, na.rm=TRUE),
+    sd_HHINC = sd(MEDHHINC, na.rm=TRUE),
+    mean_HVALUE = mean(MEDHVALUE, na.rm=TRUE),
+    sd_HVALUE = sd(MEDHVALUE, na.rm=TRUE),
+    cor_HVALUE_HHINC = cor(MEDHHINC, MEDHVALUE, use='complete.obs'),
+    cor_HHINC_1821 = cor(MEDHHINC, college_frac, use='complete.obs'),
+    cor_HVALUE_1821 = cor(MEDHVALUE, college_frac, use='complete.obs')
+  )
+
+```
+
+The correlation coefficient between Household Income (`MEDHHINC`) and House Value (`MEDHVALUE`) is `r round(summary_stat$cor_HVALUE_HHINC, 2)`. 
+The correlation coefficient between Household Income (`MEDHHINC`) and the percentage of the population aged 18-21 (`college_frac`) is `r round(summary_stat$cor_HHINC_1821, 2)`.
+Lastly, the correlation coefficient between House Value (`MEDHVALUE`) and the percentage of the population aged 18-21 (`college_frac`) is `r round(summary_stat$cor_HVALUE_1821, 2)`.
